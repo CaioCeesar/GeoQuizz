@@ -26,6 +26,17 @@ public class QuestaoDB {
         valores.put(QuestoesDbSchema.QuestoesTbl.Cols.QUESTAO_CORRETA, q.isRespostaCorreta());
         return valores;
     }
+
+    /*private static ContentValues getValoresResposta(Resposta r){
+        ContentValues valores = new ContentValues();
+
+        // pares chave-valor: nomes das colunas - valores
+        valores.put(QuestoesDbSchema.RespostasTbl.Cols.UUID, q.getId().toString());
+        valores.put(QuestoesDbSchema.RespostasTbl.Cols.RESPOSTA_CORRETA,
+                mStaticContext.getString(q.getTextoRespostaId())); // recupera valor do recurso string pelo id
+        valores.put(QuestoesDbSchema.RespostasTbl.Cols.RESPOSTA_OFERECIDA, r.isRespostaCorreta());
+        return valores;
+    }*/
     public void addQuestao(Questao q){
         ContentValues valores = getValoresConteudo(q);
         mDatabase.insert(QuestoesDbSchema.QuestoesTbl.NOME, null, valores);
@@ -47,10 +58,37 @@ public class QuestaoDB {
                 );
                 return cursor;
     }
+
+    public Cursor queryResposta(String clausulaWhere, String[] argsWhere){
+        Cursor cursor = mDatabase.query(QuestoesDbSchema.RespostasTbl.NOME,
+                null,  // todas as colunas
+                clausulaWhere,
+                argsWhere,
+                null, // sem group by
+                null, // sem having
+                null  // sem order by
+        );
+        return cursor;
+    }
     void removeBanco(){
         int delete;
         delete = mDatabase.delete(
-                QuestoesDbSchema.QuestoesTbl.NOME,
+                QuestoesDbSchema.RespostasTbl.NOME,
                 null, null);
     }
+
+    public void addResposta(int respostaCorreta, boolean respostaOferecida, boolean colou) {
+        ContentValues values = new ContentValues();
+        values.put("RESPOSTA_CORRETA", respostaCorreta);
+        values.put("RESPOSTA_OFERECIDA", respostaOferecida);
+        values.put("COLOU", colou);
+
+        mDatabase.insert(QuestoesDbSchema.RespostasTbl.NOME, null, values);
+    }
+
+    /*public void addResposta(Resposta r){
+        ContentValues valores = getValoresResposta(r);
+        mDatabase.insert(QuestoesDbSchema.RespostasTbl.NOME, null, valores);
+    }*/
+
 }
